@@ -163,8 +163,6 @@ namespace MatricesWithArrays
                 // work to be done.
                 for (var i = 0; i < columns; i++)
                 {
-                    //determinant += array[0, i] * (array[1, (i + 1) % columns] * array[2, (i + 2) % columns] -
-                    //                              array[1, (i + 2) % columns] * array[2, (i + 1) % columns]);
                 }
             }
             Console.WriteLine($"The determinant of the matrix is {determinant}.");
