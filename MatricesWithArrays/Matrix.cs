@@ -2,103 +2,118 @@
 
 namespace MatricesWithArrays
 {
-    internal class Matrix
+    public class Matrix
     {
-        private int _rowMatrix; //number of rows for matrix
-        private int _columnMatrix;
-        private int[,] _matrix; //holds values of matrix itself
+        private int _rows; //number of rows for matrix
+        private int _columns;
+        private int[,,,] _matrix; //holds values of matrix itself
 
         //create r*c matrix and fill it with data passed to this constructor
-        public Matrix(int[,] array)
+        public Matrix(int rows, int columns, int[,,,] array)
         {
-            _matrix = array;
-            _rowMatrix = _matrix.GetLength(0);
-            _columnMatrix = _matrix.GetLength(1);
-            Console.WriteLine("Constructor which sets matrix size {0}*{1} and fills it with initial data executed.", _rowMatrix, _columnMatrix);
+            _rows = rows;
+            _columns = columns;
+            _matrix = (int[,,,])array.Clone();
         }
 
-        //returns value of an element for a given row and column of matrix
-        public int ReadElement(int row, int column)
+        public int Determinant()
         {
-            return _matrix[row, column];
-        }
-
-        //sets value of an element for a given row and column of matrix
-        public void SetElement(int value, int row, int column)
-        {
-            _matrix[row, column] = value;
-        }
-
-        public double DeterMatrix()
-        {
-            int det = 0;
-            int value = 0;
-            int i, j, k;
-
-            i = _rowMatrix;
-            j = _columnMatrix;
-            int n = i;
-
-            if (i != j)
+            var determinant = 1;
+            if (_rows == _columns)
             {
-                Console.WriteLine("determinant can be calculated only for square matrix!");
-                return det;
+                var mat = _matrix;
+                if (_rows == 1)
+                {
+                    return mat[0, 0, 0, 0];
+                }
+
+                if (_rows == 2)
+                {
+                    return mat[0, 0, 0, 0] * mat[0, 0, 1, 1] - mat[0, 0, 0, 1] * mat[0, 0, 1, 0];
+                }
+                var b = ToRightTriangular();
+
+                for (var i = 0; i < _rows; i++)
+                {
+                    determinant *= b[i, i, 0, 0];
+                }
+            }
+            else
+            {
+                determinant = 0;
             }
 
-            for (i = 0; i < n - 1; i++)
+            return determinant;
+        }
+
+        public int[,,,] ToRightTriangular()
+        {
+            var m = Copy();
+            var n = _rows;
+            var kp = _columns;
+            var k = n;
+            int[,] els = { };
+            do
             {
-                for (j = i + 1; j < n; j++)
+                var i = k - n;
+                int np;
+                int p;
+                if (m[0, 0, i, i] == 0)
                 {
-                    det = ReadElement(j, i) / ReadElement(i, i);
-
-                    for (k = i; k < n; k++)
+                    for (var j = i + 1; j < k; j++)
                     {
-                        value = ReadElement(j, k) - det * ReadElement(i, k);
+                        if (m[0, 0, j, i] != 0)
+                        {
+                            np = kp;
+                            do
+                            {
+                                p = kp - np;
+                                var index = Array.IndexOf(els, null);
 
-                        SetElement(value, j, k);
+                                if (index != -1)
+                                {
+                                    els[index, index] = m[0, 0, i, p] + m[0, 0, j, p];
+                                }
+                            } while (--np != 0); m[0, 0, i, i] = els[i, i];
+                            break;
+                        }
                     }
+                }
+
+                if (m[0, 0, i, i] == 0) continue;
+                {
+                    for (var j = i + 1; j < k; j++)
+                    {
+                        var multiplier = m[0, 0, j, i] / m[0, 0, i, i];
+                        els.Initialize();
+                        np = kp;
+                        do
+                        {
+                            p = kp - np;
+                            var index = Array.IndexOf(els, null);
+
+                            if (index != -1)
+                            {
+                                els[index, index] = p <= i ? 0 : m[0, 0, j, p] - m[0, 0, i, p] * multiplier;
+                            }
+                        } while (--np != 0); m[0, 0, j, j] = els[j, j];
+                    }
+                }
+            } while (--n != 0); return m;
+        }
+
+        public int[,,,] Copy()
+        {
+            var b = (int[,,,])_matrix.Clone();
+            for (var i = 0; i < _rows; i++)
+            {
+                for (var j = 0; j < _columns; j++)
+                {
+                    b[0, 0, i, j] = _matrix[0, 0, i, j];
                 }
             }
 
-            det = 1;
-            for (i = 0; i < n; i++)
-                det *= ReadElement(i, i);
-
-            return det;
+            return b;
         }
     }
-
-    //Matrix mat03 = new Matrix(new[,]
-    //{
-    //{1.0, 2.0, -1.0},
-    //{-2.0, -5.0, -1.0},
-    //{1.0, -1.0, -2.0},
-    //});
-
-    //Matrix mat04 = new Matrix(new[,]
-    //{
-    //{1.0, 2.0, 1.0, 3.0},
-    //{-2.0, -5.0, -2.0, 1.0},
-    //{1.0, -1.0, -3.0, 2.0},
-    //{4.0, -1.0, -3.0, 1.0},
-    //});
-
-    //Matrix mat05 = new Matrix(new[,]
-    //{
-    //{1.0, 2.0, 1.0, 2.0, 3.0},
-    //{2.0, 1.0, 2.0, 2.0, 1.0},
-    //{3.0, 1.0, 3.0, 1.0, 2.0},
-    //{1.0, 2.0, 4.0, 3.0, 2.0},
-    //{2.0, 2.0, 1.0, 2.0, 1.0},
-    //});
-
-    //double determinant = mat03.DeterMatrix();
-    //Console.WriteLine("determinant is: {0}", determinant);
-
-    //determinant = mat04.DeterMatrix();
-    //Console.WriteLine("determinant is: {0}", determinant);
-
-    //determinant = mat05.DeterMatrix();
-    //Console.WriteLine("determinant is: {0}", determinant);
-    //Console.ReadLine();
 }
