@@ -68,12 +68,12 @@ namespace MatricesWithArrays
                         do
                         {
                             p = kp - np;
-                            //var index = Array.IndexOf(els, null);
+                            ////var index = Array.IndexOf(els, null);
 
-                            if (index != -1)
-                            {
-                                els[index, index] = m[0, 0, i, p] + m[0, 0, j, p];
-                            }
+                            //if (index != -1)
+                            //{
+                            //    els[index, index] = m[0, 0, i, p] + m[0, 0, j, p];
+                            //}
                         } while (--np != 0); m[0, 0, i, i] = els[i, i];
                         break;
                     }
