@@ -12,32 +12,32 @@ namespace MatricesWithArrays
         private const int RandomMaxValue = 30;
         private const int RandomMinValue = 0;
         private static int[,] _matrix;
-        private static int[,,,] Matrix4D = new int[1, 1, 4, 4];
+        private static readonly int[,,,] Matrix4D = new int[1, 1, 4, 4];
         private static readonly Random Random = new Random();
 
         private static void Main()
         {
-            //Console.WriteLine("Hi What's your name ?");
-            //var name = Console.ReadLine();
+            Console.WriteLine("Hi What's your name ?");
+            var name = Console.ReadLine();
 
-            //Console.WriteLine($"Welcome {name}, this is a program to show some matrix calculation. Get ready to be marveled.");
-            //RandomNumberChoice(Matrix4D);
-            //DisplayMatrix(Matrix4D);
+            Console.WriteLine($"Welcome {name}, this is a program to perform some matrix calculations for a matrix of the form => int[,,,] = new [1,1,4,4]. Get ready to be marveled.");
+            RandomNumberChoice();
+            DisplayMatrix(Matrix4D);
 
-            ////Console.WriteLine("Calculate the determinant...");
-            ////Console.ReadLine();
-            ////MatrixDeterminant(matrix4D);
+            Console.WriteLine("Calculating the determinant...");
+            MatrixDeterminant(Matrix4D);
 
-            //Console.WriteLine("\nUsing the data structure above, the result of the above squared is below");
-            //MatrixSquared(Matrix4D);
+            Console.WriteLine("\nUsing the data structure above, the result of the above squared is below");
+            MatrixSquared(Matrix4D);
 
             Console.WriteLine("Press any key to continue matrix calculation or close the program");
             Console.ReadLine();
             MatrixGenerator();
             DisplayMatrix(_matrix);
 
-            Console.WriteLine("\nNow I'll find the determinant");
+            Console.WriteLine("\nNow I'll find the determinant and the square");
             MatrixDeterminant(_matrix);
+            MatrixSquared(_matrix);
             Console.ReadLine();
         }
 
@@ -45,7 +45,6 @@ namespace MatricesWithArrays
         {
             for (var i = 0; i < array.GetLength(0); i++)
             {
-                Console.WriteLine(" [ ");
                 for (var j = 0; j < array.GetLength(1); j++)
                 {
                     for (var k = 0; k < array.GetLength(2); k++)
@@ -55,7 +54,7 @@ namespace MatricesWithArrays
                             try
                             {
                                 var input = int.Parse(Console.ReadLine());
-                                Matrix4D[i, j, k, l] = input;
+                                array[i, j, k, l] = input;
                             }
                             catch (Exception) // once user tries anything fishy, i generate random values
                             {
@@ -63,17 +62,16 @@ namespace MatricesWithArrays
                                 RandomNumberGen(Matrix4D);
                             }
                         }
-                        Console.WriteLine("Now the next row");
+                        if (i < array.GetLength(0)) Console.WriteLine("Now the next row"); // only print when all rows have not been filled
                     }
                 }
-                Console.WriteLine(" ]\n");
+                Console.WriteLine();
             }
         }
 
-        private static void EnterMatrixEntries()
+        private static void EnterMatrixEntries(int[,] array)
         {
             Console.WriteLine("Enter values for the matrix below");
-            Console.WriteLine(" [ ");
             for (var i = 0; i < _rows; i++)
             {
                 for (var j = 0; j < _columns; j++)
@@ -81,20 +79,21 @@ namespace MatricesWithArrays
                     try
                     {
                         var input = int.Parse(Console.ReadLine());
-                        _matrix[i, j] = input;
+                        array[i, j] = input;
                     }
                     catch (Exception) // once user tries anything fishy, i generate random values
                     {
                         Console.WriteLine("You wanted to crash the program but you failed. I will generate a random value");
-                        _matrix[i, j] = Random.Next(RandomMinValue, RandomMaxValue); // Next returns random integers from 0 to 30
+                        array[i, j] = Random.Next(RandomMinValue, RandomMaxValue); // Next returns random integers from 0 to 30
                     }
                 }
-                Console.WriteLine("Now the next row");
+                if (i < _rows - 1)
+                    Console.WriteLine("Now the next row");
             }
-            Console.WriteLine(" ]\n");
+            Console.WriteLine();
         }
 
-        private static void RandomNumberChoice()
+        private static void RandomNumberChoice(int[,] array) // for 2D array, normal matrix
         {
             Console.Write("Do you want to enter your own values for the matrix? let your yes be yes and your no be no ");
             try
@@ -111,24 +110,24 @@ namespace MatricesWithArrays
                     case "yes":
                         try
                         {
-                            EnterMatrixEntries();
+                            EnterMatrixEntries(array);
                         }
                         catch (Exception)
                         {
                             Console.WriteLine("You wanted to crash the program but you failed. I will generate random values");
-                            RandomNumberGen(_matrix);
+                            RandomNumberGen(array);
                         }
                         break;
 
                     case "no":
-                        RandomNumberGen(_matrix);
+                        RandomNumberGen(array);
                         break;
                 }
             }
             catch (Exception)
             {
                 Console.WriteLine("You wanted to crash the program but you failed. I will run as intended");
-                RandomNumberGen(Matrix4D);
+                RandomNumberGen(_matrix);
             }
         }
 
@@ -138,15 +137,14 @@ namespace MatricesWithArrays
             {
                 for (var j = 0; j < _columns; j++)
                 {
-                    _matrix[i, j] = Random.Next(RandomMinValue, RandomMaxValue); // Next returns random integers from 0 to 30
+                    array[i, j] = Random.Next(RandomMinValue, RandomMaxValue); // Next returns random integers from 0 to 30
                 }
             }
             Console.WriteLine("Your matrix has been filled with random numbers");
         }
 
-        private static void RandomNumberChoice(int[,,,] array)
+        private static void RandomNumberChoice()
         {
-            Console.WriteLine($"Random numbers will now be generated for the matrix from {RandomMinValue} to {RandomMaxValue}");
             Console.Write("Do you want to enter your own values for the matrix? let your yes be yes and your no be no ");
             try
             {
@@ -172,6 +170,7 @@ namespace MatricesWithArrays
                         break;
 
                     case "no":
+                        Console.WriteLine($"Random numbers will now be generated for the matrix from {RandomMinValue} to {RandomMaxValue}");
                         RandomNumberGen(Matrix4D);
                         break;
                 }
@@ -193,14 +192,14 @@ namespace MatricesWithArrays
                     {
                         for (var l = 0; l < Matrix4D.GetLength(3); l++)
                         {
-                            Matrix4D[i, j, k, l] = Random.Next(RandomMinValue, RandomMaxValue);
+                            array[i, j, k, l] = Random.Next(RandomMinValue, RandomMaxValue);
                         }
                     }
                 }
             }
         }
 
-        private static void MatrixGenerator()
+        private static void MatrixGenerator() // generate 2D array or matrix
         {
             Console.WriteLine("Let's create your matrix shall we?");
             try
@@ -226,7 +225,7 @@ namespace MatricesWithArrays
             }
 
             _matrix = new int[_rows, _columns];
-            RandomNumberChoice(); // calls for user input or initiates number generator function from within
+            RandomNumberChoice(_matrix); // calls for user input or initiates number generator function from within
         }
 
         private static void MatrixDeterminant(int[,] array)
@@ -238,21 +237,25 @@ namespace MatricesWithArrays
             }
             else
             {
-                for (var i = 0; i < _rows; i++)
+                if (_rows == 2)
                 {
-                    for (var j = 0; j < _columns; i++)
+                    determinant = array[0, 0] * array[1, 1] - array[0, 1] * array[1, 0];
+                }
+                else
+                {
+                    for (var i = 0; i < _columns; i++) // 3x3 matrix only
                     {
-                        var a = array[i, j];
-                        var b = array[i + 1, (j + 1) % _columns];
-                        var c = array[i + 2, (j + 2) % _columns];
-                        var d = array[i + 1, (j + 2) % _columns];
-                        var e = array[i + 2, (j + 1) % _columns];
-
+                        var a = array[0, i];
+                        var b = array[1, (i + 1) % _columns];
+                        var c = array[2, (i + 2) % _columns];
+                        var d = array[1, (i + 2) % _columns];
+                        var e = array[2, (i + 1) % _columns];
                         determinant += a * (b * c - d * e);
                     }
                 }
+
+                Console.WriteLine($"The determinant of the matrix is {determinant}.");
             }
-            Console.WriteLine($"The determinant of the matrix is {determinant}.");
         }
 
         private static void MatrixDeterminant(int[,,,] array)
@@ -263,8 +266,22 @@ namespace MatricesWithArrays
             }
             else
             {
-                var a = new Matrix(array.GetLength(2), array.GetLength(3), Matrix4D);
-                var determinant = a.Determinant();
+                var determinant = array[0, 0, 0, 0] * (array[0, 0, 1, 1] * (array[0, 0, 2, 2] * array[0, 0, 3, 3] - array[0, 0, 2, 3] * array[0, 0, 3, 2])
+                                                        - array[0, 0, 1, 2] * (array[0, 0, 2, 1] * array[0, 0, 3, 3] - array[0, 0, 2, 3] * array[0, 0, 3, 1])
+                                                        + array[0, 0, 1, 3] * (array[0, 0, 2, 1] * array[0, 0, 3, 2] - array[0, 0, 2, 2] * array[0, 0, 3, 1]))
+                                  // second column
+                                  - array[0, 0, 0, 1] * (array[0, 0, 1, 0] * (array[0, 0, 2, 2] * array[0, 0, 3, 3] - array[0, 0, 2, 3] * array[0, 0, 3, 2])
+                                                      - array[0, 0, 1, 2] * (array[0, 0, 2, 0] * array[0, 0, 3, 3] - array[0, 0, 2, 3] * array[0, 0, 3, 0])
+                                                      + array[0, 0, 1, 3] * (array[0, 0, 2, 0] * array[0, 0, 3, 2] - array[0, 0, 2, 2] * array[0, 0, 3, 0]))
+                                  //third column
+                                  + array[0, 0, 0, 2] * (array[0, 0, 1, 0] * (array[0, 0, 2, 1] * array[0, 0, 3, 3] - array[0, 0, 2, 3] * array[0, 0, 3, 1])
+                                                      - array[0, 0, 1, 1] * (array[0, 0, 2, 0] * array[0, 0, 3, 3] - array[0, 0, 2, 3] * array[0, 0, 3, 0])
+                                                      + array[0, 0, 1, 3] * (array[0, 0, 2, 0] * array[0, 0, 3, 1] - array[0, 0, 2, 1] * array[0, 0, 3, 0]))
+                                   //fourth column
+                                   - array[0, 0, 0, 3] * (array[0, 0, 1, 0] * (array[0, 0, 2, 1] * array[0, 0, 3, 2] - array[0, 0, 2, 2] * array[0, 0, 3, 1])
+                                                       - array[0, 0, 1, 1] * (array[0, 0, 2, 0] * array[0, 0, 3, 2] - array[0, 0, 2, 2] * array[0, 0, 3, 0])
+                                                       + array[0, 0, 1, 2] * (array[0, 0, 2, 0] * array[0, 0, 3, 1] - array[0, 0, 2, 1] * array[0, 0, 3, 0]));
+
                 Console.WriteLine($"The determinant of the matrix is {determinant}.");
             }
         }
@@ -275,7 +292,7 @@ namespace MatricesWithArrays
             var rowCount = array.GetLength(2);
             var columnCount = array.GetLength(3);
             var copyColumnCount = arrayCopy.GetLength(3);
-            if (array.GetLength(2) == arrayCopy.GetLength(3))
+            if (rowCount == copyColumnCount)
             {
                 var arrayProduct = (int[,,,])array.Clone();
                 for (var i = 0; i < rowCount; i++)
@@ -301,23 +318,54 @@ namespace MatricesWithArrays
             }
         }
 
+        private static void MatrixSquared(int[,] array)
+        {
+            var arrayCopy = (int[,])array.Clone();
+            var rowCount = _rows;
+            var columnCount = _columns;
+            var copyColumnCount = arrayCopy.GetLength(1);
+            if (rowCount == copyColumnCount)
+            {
+                var arrayProduct = (int[,])array.Clone();
+                for (var i = 0; i < rowCount; i++)
+                {
+                    for (var j = 0; j < copyColumnCount; j++)
+                    {
+                        var sum = 0;
+                        for (var k = 0; k < columnCount; k++)
+                        {
+                            var a = array[i, k];
+                            var b = arrayCopy[k, j];
+                            sum += a * b;
+                        }
+                        arrayProduct[i, j] = sum;
+                    }
+                }
+                Console.WriteLine("Here is the square of the matrix below");
+                DisplayMatrix(arrayProduct);
+            }
+            else
+            {
+                Console.WriteLine("The matrix must have the same number of rows as columns");
+            }
+        }
+
         private static void DisplayMatrix(int[,,,] array)
         {
             for (var i = 0; i < array.GetLength(0); i++)
             {
-                Console.WriteLine(" [");
                 for (var j = 0; j < array.GetLength(1); j++)
                 {
                     for (var k = 0; k < array.GetLength(2); k++)
                     {
                         for (var l = 0; l < array.GetLength(3); l++)
                         {
-                            Console.Write($"   { array[i, j, k, l] }");
+                            Console.Write($"   {array[i, j, k, l]}");
                         }
                         Console.WriteLine();
                     }
                 }
-                Console.WriteLine(" ]\n");
+                Console.WriteLine("");
             }
         }
 
@@ -327,7 +375,7 @@ namespace MatricesWithArrays
             {
                 for (var j = 0; j < array.GetLength(1); j++)
                 {
-                    Console.Write($" { array[i, j] }");
+                    Console.Write($" {array[i, j]}");
                 }
                 Console.WriteLine();
             }
