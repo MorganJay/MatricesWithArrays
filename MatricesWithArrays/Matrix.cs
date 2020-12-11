@@ -1,19 +1,20 @@
 ﻿using System;
+using System.Linq;
 
 namespace MatricesWithArrays
 {
     public class Matrix
     {
-        private int _rows; //number of rows for matrix
-        private int _columns;
-        private int[,,,] _matrix; //holds values of matrix itself
+        private readonly int _rows; //number of rows for matrix
+        private readonly int _columns;
+        private readonly int[,,,] _matrix; //holds values of matrix itself
 
         //create r*c matrix and fill it with data passed to this constructor
-        public Matrix(int rows, int columns, int[,,,] array)
+        public Matrix(int[,,,] array)
         {
-            _rows = rows;
-            _columns = columns;
-            _matrix = (int[,,,])array.Clone();
+            _rows = array.GetLength(2);
+            _columns = array.GetLength(3);
+            _matrix = array;
         }
 
         public int Determinant()
@@ -22,15 +23,15 @@ namespace MatricesWithArrays
             if (_rows == _columns)
             {
                 var mat = _matrix;
-                if (_rows == 1)
+                switch (_rows)
                 {
-                    return mat[0, 0, 0, 0];
+                    case 1:
+                        return mat[0, 0, 0, 0];
+
+                    case 2:
+                        return mat[0, 0, 0, 0] * mat[0, 0, 1, 1] - mat[0, 0, 0, 1] * mat[0, 0, 1, 0];
                 }
 
-                if (_rows == 2)
-                {
-                    return mat[0, 0, 0, 0] * mat[0, 0, 1, 1] - mat[0, 0, 0, 1] * mat[0, 0, 1, 0];
-                }
                 var b = ToRightTriangular();
 
                 for (var i = 0; i < _rows; i++)
@@ -62,42 +63,38 @@ namespace MatricesWithArrays
                 {
                     for (var j = i + 1; j < k; j++)
                     {
-                        if (m[0, 0, j, i] != 0)
-                        {
-                            np = kp;
-                            do
-                            {
-                                p = kp - np;
-                                var index = Array.IndexOf(els, null);
-
-                                if (index != -1)
-                                {
-                                    els[index, index] = m[0, 0, i, p] + m[0, 0, j, p];
-                                }
-                            } while (--np != 0); m[0, 0, i, i] = els[i, i];
-                            break;
-                        }
-                    }
-                }
-
-                if (m[0, 0, i, i] == 0) continue;
-                {
-                    for (var j = i + 1; j < k; j++)
-                    {
-                        var multiplier = m[0, 0, j, i] / m[0, 0, i, i];
-                        els.Initialize();
+                        if (m[0, 0, j, i] == 0) continue;
                         np = kp;
                         do
                         {
                             p = kp - np;
-                            var index = Array.IndexOf(els, null);
+                            //var index = Array.IndexOf(els, null);
 
                             if (index != -1)
                             {
-                                els[index, index] = p <= i ? 0 : m[0, 0, j, p] - m[0, 0, i, p] * multiplier;
+                                els[index, index] = m[0, 0, i, p] + m[0, 0, j, p];
                             }
-                        } while (--np != 0); m[0, 0, j, j] = els[j, j];
+                        } while (--np != 0); m[0, 0, i, i] = els[i, i];
+                        break;
                     }
+                }
+
+                if (m[0, 0, i, i] == 0) continue;
+
+                for (var j = i + 1; j < k; j++)
+                {
+                    var multiplier = m[0, 0, j, i] / m[0, 0, i, i];
+                    els.Initialize();
+                    np = kp;
+                    do
+                    {
+                        p = kp - np;
+                        var index = Array.IndexOf(els, null);
+                        if (index != -1)
+                        {
+                            els[index, index] = p <= i ? 0 : m[0, 0, j, p] - m[0, 0, i, p] * multiplier;
+                        }
+                    } while (--np != 0); m[0, 0, j, j] = els[j, j];
                 }
             } while (--n != 0); return m;
         }
@@ -105,15 +102,30 @@ namespace MatricesWithArrays
         public int[,,,] Copy()
         {
             var b = (int[,,,])_matrix.Clone();
-            for (var i = 0; i < _rows; i++)
+            return b;
+        }
+
+        public static int[] IndexOf(int value, int[,] array)
+        {
+            var index = new int[2];
+            for (var i = array.GetLowerBound(0); i <= array.GetUpperBound(0); i++)
             {
-                for (var j = 0; j < _columns; j++)
+                for (var j = array.GetLowerBound(1); j <= array.GetUpperBound(1); j++)
                 {
-                    b[0, 0, i, j] = _matrix[0, 0, i, j];
+                    if (array[i, j] == value)
+                    {
+                        index[0] = i;
+                        index[1] = j;
+                    }
+                    else
+                    {
+                        index[0] = -1;
+                        index[1] = -1;
+                    }
                 }
             }
-
-            return b;
+            Console.Write(index);
+            return index;
         }
     }
 }

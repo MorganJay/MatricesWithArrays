@@ -25,20 +25,22 @@ namespace MatricesWithArrays
             DisplayMatrix(Matrix4D);
 
             Console.WriteLine("Calculating the determinant...");
-            MatrixDeterminant(Matrix4D);
+            //MatrixDeterminant(Matrix4D);
+            var matrix = new Matrix(Matrix4D);
+            Console.WriteLine($"The determinant of the matrix is {matrix.Determinant()}.");
 
-            Console.WriteLine("\nUsing the data structure above, the result of the above squared is below");
-            MatrixSquared(Matrix4D);
+            //Console.WriteLine("\nUsing the data structure above, the result of the above squared is below");
+            //MatrixSquared(Matrix4D);
 
-            Console.WriteLine("Press any key to continue matrix calculation or close the program");
-            Console.ReadLine();
-            MatrixGenerator();
-            DisplayMatrix(_matrix);
+            //Console.WriteLine("Press any key to continue matrix calculation or close the program");
+            //Console.ReadLine();
+            //MatrixGenerator();
+            //DisplayMatrix(_matrix);
 
-            Console.WriteLine("\nNow I'll find the determinant and the square");
-            MatrixDeterminant(_matrix);
-            MatrixSquared(_matrix);
-            Console.ReadLine();
+            //Console.WriteLine("\nNow I'll find the determinant and the square");
+            //MatrixDeterminant(_matrix);
+            //MatrixSquared(_matrix);
+            //Console.ReadLine();
         }
 
         private static void EnterMatrixEntries(int[,,,] array)
