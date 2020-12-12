@@ -26,8 +26,6 @@ namespace MatricesWithArrays
 
             Console.WriteLine("Calculating the determinant...");
             MatrixDeterminant(Matrix4D);
-            //var matrix = new Matrix(Matrix4D);
-            //Console.WriteLine($"The determinant of the matrix is {matrix.Determinant()}.");
 
             Console.WriteLine("\nUsing the data structure above, the result of the above squared is below");
             MatrixSquared(Matrix4D);
@@ -45,6 +43,7 @@ namespace MatricesWithArrays
 
         private static void EnterMatrixEntries(int[,,,] array)
         {
+            Console.WriteLine("Now start entering values for the matrix one row after the other");
             for (var i = 0; i < array.GetLength(0); i++)
             {
                 for (var j = 0; j < array.GetLength(1); j++)
@@ -62,6 +61,7 @@ namespace MatricesWithArrays
                             {
                                 Console.WriteLine("You wanted to crash the program but you failed. I will generate random values");
                                 RandomNumberGen(Matrix4D);
+                                Console.WriteLine("Now enter the next number for the matrix");
                             }
                         }
                         if (i < array.GetLength(0)) Console.WriteLine("Now the next row"); // only print when all rows have not been filled
@@ -133,18 +133,6 @@ namespace MatricesWithArrays
             }
         }
 
-        private static void RandomNumberGen(int[,] array)
-        {
-            for (var i = 0; i < _rows; i++)
-            {
-                for (var j = 0; j < _columns; j++)
-                {
-                    array[i, j] = Random.Next(RandomMinValue, RandomMaxValue); // Next returns random integers from 0 to 30
-                }
-            }
-            Console.WriteLine("Your matrix has been filled with random numbers");
-        }
-
         private static void RandomNumberChoice()
         {
             Console.Write("Do you want to enter your own values for the matrix? let your yes be yes and your no be no ");
@@ -182,6 +170,18 @@ namespace MatricesWithArrays
                 Console.WriteLine("You wanted to crash the program but you failed. I will run as intended");
                 RandomNumberGen(Matrix4D);
             }
+        }
+
+        private static void RandomNumberGen(int[,] array)
+        {
+            for (var i = 0; i < _rows; i++)
+            {
+                for (var j = 0; j < _columns; j++)
+                {
+                    array[i, j] = Random.Next(RandomMinValue, RandomMaxValue); // Next returns random integers from 0 to 30
+                }
+            }
+            Console.WriteLine("Your matrix has been filled with random numbers");
         }
 
         private static void RandomNumberGen(int[,,,] array)
@@ -296,7 +296,7 @@ namespace MatricesWithArrays
             var copyColumnCount = arrayCopy.GetLength(3);
             if (rowCount == copyColumnCount)
             {
-                var arrayProduct = (int[,,,])array.Clone();
+                var arrayProduct = new int[1, 1, 4, 4];
                 for (var i = 0; i < rowCount; i++)
                 {
                     for (var j = 0; j < copyColumnCount; j++)
@@ -322,22 +322,22 @@ namespace MatricesWithArrays
 
         private static void MatrixSquared(int[,] array)
         {
-            var arrayCopy = (int[,])array.Clone();
+            //var arrayCopy = (int[,])array.Clone();
             var rowCount = _rows;
             var columnCount = _columns;
-            var copyColumnCount = arrayCopy.GetLength(1);
-            if (rowCount == copyColumnCount)
+            // var copyColumnCount = array.GetLength(1);
+            if (rowCount == columnCount)
             {
                 var arrayProduct = (int[,])array.Clone();
                 for (var i = 0; i < rowCount; i++)
                 {
-                    for (var j = 0; j < copyColumnCount; j++)
+                    for (var j = 0; j < array.GetLength(1); j++)
                     {
                         var sum = 0;
                         for (var k = 0; k < columnCount; k++)
                         {
                             var a = array[i, k];
-                            var b = arrayCopy[k, j];
+                            var b = array[k, j];
                             sum += a * b;
                         }
                         arrayProduct[i, j] = sum;
@@ -362,7 +362,7 @@ namespace MatricesWithArrays
                     {
                         for (var l = 0; l < array.GetLength(3); l++)
                         {
-                            Console.Write($"   {array[i, j, k, l]}");
+                            Console.Write($"   {array[i, j, k, l]}\t");
                         }
                         Console.WriteLine();
                     }
@@ -377,7 +377,7 @@ namespace MatricesWithArrays
             {
                 for (var j = 0; j < array.GetLength(1); j++)
                 {
-                    Console.Write($" {array[i, j]}");
+                    Console.Write($" {array[i, j]}\t");
                 }
                 Console.WriteLine();
             }
